@@ -16,7 +16,7 @@ class FriendsTableViewController: UITableViewController {
         Friend(name: "Galder", mood: .medium),
         Friend(name: "Amaya", mood: .happy)
         ] {
-        didSet {
+        didSet { //This is an observer and waits for the array to change and when it changes it runs whatever we put inside here.
             tableView.reloadData()
         }
     }
@@ -38,17 +38,24 @@ class FriendsTableViewController: UITableViewController {
         cell.moodDescriptionLabel.text = Friend.getDescription(mood: friend.mood)
         cell.moodButton.setTitle(friend.mood.rawValue, for: .normal)
         
+        // Add a target to the mood button that waits for an action to happen on the button in this case if it is touched (for: .touchUpInside) and when that happens it runs an action in this case the updateMood function from FriendsTableViewController.
         cell.moodButton.addTarget(self, action: #selector(FriendsTableViewController.updateMood), for: .touchUpInside)
+        
+        // Set the button's tag to the index of the friend. The tag property is like an identifier.
         cell.moodButton.tag = indexPath.row
         
         return cell
     }
     
     func updateMood(sender: UIButton) {
+        // Get the friend to update using the tag property we set earlier.
         let friendToUpdate = friendArray[sender.tag]
+        
+        // Get current mood.
         let mood = friendToUpdate.mood
         var nextMood: Mood!
         
+        // Get next mood based on the previous one.
         switch mood {
         case .happy:
             nextMood = Mood.medium
@@ -58,9 +65,10 @@ class FriendsTableViewController: UITableViewController {
             nextMood = Mood.happy
         }
         
+        //Update the model.
         friendToUpdate.mood = nextMood
         
-        
+        //update the view.
         tableView.reloadData()
     }
     
